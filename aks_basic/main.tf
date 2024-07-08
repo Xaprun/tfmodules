@@ -23,15 +23,19 @@ resource "azurerm_kubernetes_cluster" "aks" {
     load_balancer_sku = "standard"
   }
 
-  # rbac {
-  #   enabled = true
-  # }
 
   tags = {
     Environment = "Development"
   }
 }
 
-# output "kube_config" {
-#   value = azurerm_kubernetes_cluster.aks.kube_config_raw
-# }
+resource "azurerm_public_ip" "example" {
+  count               = 1
+  name                = "${var.aks_cluster_name}-public-ip"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  allocation_method   = "Dynamic"
+  sku                 = "Standard"
+}
+
+
