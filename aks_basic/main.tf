@@ -2,20 +2,36 @@ provider "azurerm" {
   features {}
 }
 
-resource "azurerm_resource_group" "rg" {
-  name     = "aks-resource-group"
-  location = "westeurope"
-}
+resource "azurerm_kubernetes_cluster" "aks" {
+  name                = var.aks_cluster_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  dns_prefix          = var.aks_cluster_name
 
-module "aks" {
-  source              = "./modules/aks"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  aks_cluster_name    = "aks-tf-cluster"
-  node_count          = 2
-  node_vm_size        = "Standard_DS2_v2"
+  default_node_pool {
+    name       = "default"
+    node_count = var.node_count
+    vm_size    = var.node_vm_size
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  network_profile {
+    network_plugin    = "azure"
+    load_balancer_sku = "standard"
+  }
+
+  role_based_access_control {
+    enabled = true
+  }
+
+  tags = {
+    Environment = "Development"
+  }
 }
 
 output "kube_config" {
-  value = module.aks.kube_config
+  value = azurerm_kubernetes_cluster.aks.kube_config_raw
 }
