@@ -23,9 +23,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
     load_balancer_sku = "standard"
   }
 
-  rbac {
-    enabled = true
-  }
+  # rbac {
+  #   enabled = true
+  # }
 
   tags = {
     Environment = "Development"
