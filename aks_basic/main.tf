@@ -23,7 +23,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     load_balancer_sku = "standard"
   }
 
-  role_based_access_control {
+  rbac {
     enabled = true
   }
 
