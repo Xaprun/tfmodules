@@ -9,3 +9,9 @@ resource "helm_release" "argo_cd" {
     file("${path.module}/argocd-values.yaml")
   ]
 }
+
+resource "kubernetes_namespace" "argocd" {
+  metadata {
+    name = "argocd"
+  }
+}
