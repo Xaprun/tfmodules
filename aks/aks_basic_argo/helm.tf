@@ -27,27 +27,3 @@ resource "kubernetes_namespace" "argocd" {
   depends_on = [null_resource.aks_ready]
 }
 
-# Check if the AKS cluster is available
-resource "null_resource" "check_cluster" {
-  provisioner "local-exec" {
-    command = "kubectl get nodes --kubeconfig=kubeconfig_aks"
-  }
-
-  depends_on = [null_resource.aks_ready]
-}
-
-
-# resource "helm_release" "argo_cd" {
-#   name       = "argo-cd"
-#   namespace  =  kubernetes_namespace.argocd.metadata[0].name
-#   repository = "https://argoproj.github.io/argo-helm"
-#   chart      = "argo-cd"
-#   version    = "3.28.1"
-
-#   #  values = [
-#   #    file("${path.module}/argocd-values.yaml")
-#   #  ]
-#    depends_on = [kubernetes_namespace.argocd]
-# }
-
-
