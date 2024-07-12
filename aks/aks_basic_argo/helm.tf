@@ -1,25 +1,27 @@
-# null_resource to wait for AKS cluster to be ready
-resource "null_resource" "wait_for_aks" {
+# null_resource to wait for AKS cluster to be ready and fetch kubeconfig
+resource "null_resource" "fetch_kubeconfig" {
   provisioner "local-exec" {
-    command = "az aks get-credentials --resource-group tf-aks-we-rg --name tf-aks --overwrite-existing"
+    command = "echo 'Waiting for AKS to be ready...'"
+    # command = "az aks get-credentials --resource-group tf-aks-we-rg --name tf-aks --file kubeconfig_aks"
+    # command = "az aks get-credentials --resource-group tf-aks-we-rg --name tf-aks --overwrite-existing"
   }
 
   depends_on = [
     azurerm_kubernetes_cluster.aks
   ]
 }
-resource "null_resource" "wait_for_aks_2" {
-  provisioner "local-exec" {
-    command = "echo 'Waiting for AKS to be ready...'"
-    # command = "echo 'Waiting for AKS to be ready...' && sleep 120"
-  }
-  depends_on = [null_resource.wait_for_aks]
+
+# local_file to read the kubeconfig fetched by null_resource
+resource "local_file" "kubeconfig" {
+  content  = file("kubeconfig_aks")
+  filename = "${path.module}/kubeconfig_aks"
 }
 
 
-
 provider "kubernetes" {
-  config_path = "~/.kube/config"
+  # config_path = "~/.kube/config"
+  config_path = local_file.kubeconfig.filename
+  # depends_on  = [null_resource.fetch_kubeconfig]
   # host                   = azurerm_kubernetes_cluster.aks.kube_config[0].host
   # client_certificate     = base64decode(azurerm_kubernetes_cluster.aks.kube_config[0].client_certificate)
   # client_key             = base64decode(azurerm_kubernetes_cluster.aks.kube_config[0].client_key)
@@ -35,6 +37,7 @@ resource "kubernetes_namespace" "argocd" {
   metadata {
     name = "argocd"
   }
+  depends_on = [null_resource.fetch_kubeconfig]
 }
 
 resource "helm_release" "argo_cd" {
