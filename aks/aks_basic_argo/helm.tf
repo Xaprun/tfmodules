@@ -20,10 +20,10 @@ resource "null_resource" "wait_for_aks_2" {
 
 provider "kubernetes" {
   config_path = "~/.kube/config"
-  host                   = azurerm_kubernetes_cluster.aks.kube_config[0].host
-  client_certificate     = base64decode(azurerm_kubernetes_cluster.aks.kube_config[0].client_certificate)
-  client_key             = base64decode(azurerm_kubernetes_cluster.aks.kube_config[0].client_key)
-  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.aks.kube_config[0].cluster_ca_certificate)
+  # host                   = azurerm_kubernetes_cluster.aks.kube_config[0].host
+  # client_certificate     = base64decode(azurerm_kubernetes_cluster.aks.kube_config[0].client_certificate)
+  # client_key             = base64decode(azurerm_kubernetes_cluster.aks.kube_config[0].client_key)
+  # cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.aks.kube_config[0].cluster_ca_certificate)
   # The provider argument name "depends_on" is reserved for use by Terraform in a future version:
   # depends_on  = [null_resource.wait_for_aks]
 }
