@@ -1,3 +1,23 @@
+# null_resource to wait for AKS cluster to be ready
+resource "null_resource" "wait_for_aks" {
+  provisioner "local-exec" {
+    command = "az aks get-credentials --resource-group tf-aks-we-rg --name tf-aks --overwrite-existing"
+  }
+
+  depends_on = [
+    azurerm_kubernetes_cluster.aks
+  ]
+}
+resource "null_resource" "wait_for_aks_2" {
+  provisioner "local-exec" {
+    command = "echo 'Waiting for AKS to be ready...'"
+    # command = "echo 'Waiting for AKS to be ready...' && sleep 120"
+  }
+  depends_on = [null_resource.wait_for_aks]
+}
+
+
+
 provider "kubernetes" {
   config_path = "~/.kube/config"
   depends_on  = [null_resource.wait_for_aks]
@@ -8,16 +28,13 @@ provider "kubernetes" {
 }
 
 
-resource "null_resource" "wait_for_aks" {
-  provisioner "local-exec" {
-    command = "echo 'Waiting for AKS to be ready...' && sleep 120"
+
+
+resource "kubernetes_namespace" "argocd" {
+  metadata {
+    name = "argocd"
   }
-
-  depends_on = [
-    azurerm_kubernetes_cluster.aks
-  ]
 }
-
 
 resource "helm_release" "argo_cd" {
   name       = "argo-cd"
@@ -29,10 +46,7 @@ resource "helm_release" "argo_cd" {
   values = [
     file("${path.module}/argocd-values.yaml")
   ]
+  depends_on = [kubernetes_namespace.argocd]
 }
 
-resource "kubernetes_namespace" "argocd" {
-  metadata {
-    name = "argocd"
-  }
-}
+
