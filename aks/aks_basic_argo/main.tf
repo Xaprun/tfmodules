@@ -36,3 +36,4 @@ resource "azurerm_public_ip" "aks-ip" {
   allocation_method   = "Dynamic"
   sku                 = "Basic"
 }
+
