@@ -1,8 +1,8 @@
 # null_resource to wait for AKS cluster to be ready and fetch kubeconfig
-resource "null_resource" "fetch_kubeconfig" {
+resource "null_resource" "aks_ready" {
   provisioner "local-exec" {
-    # command = "echo 'Waiting for AKS to be ready...'"
-     command = "az aks get-credentials --resource-group tf-aks-we-rg --name tf-aks --file kubeconfig_aks"
+    command = "echo 'Waiting for AKS to be ready...'"
+     # command = "az aks get-credentials --resource-group tf-aks-we-rg --name tf-aks --file kubeconfig_aks"
     # command = "az aks get-credentials --resource-group tf-aks-we-rg --name tf-aks --overwrite-existing"
   }
 
@@ -12,17 +12,17 @@ resource "null_resource" "fetch_kubeconfig" {
 }
 
 # local_file to read the kubeconfig fetched by null_resource
-resource "local_file" "kubeconfig" {
-  content  = file("kubeconfig_aks")
-  filename = "${path.module}/kubeconfig_aks"
-  depends_on  = [null_resource.fetch_kubeconfig]
+# resource "local_file" "kubeconfig" {
+#   content  = file("kubeconfig_aks")
+#   filename = "${path.module}/kubeconfig_aks"
+#   depends_on  = [null_resource.fetch_kubeconfig]
   
-}
+# }
 
 
-provider "kubernetes" {
+#provider "kubernetes" {
   # config_path = "~/.kube/config"
-  config_path = local_file.kubeconfig.filename
+  # config_path = local_file.kubeconfig.filename
   # depends_on  = [null_resource.fetch_kubeconfig]
   # host                   = azurerm_kubernetes_cluster.aks.kube_config[0].host
   # client_certificate     = base64decode(azurerm_kubernetes_cluster.aks.kube_config[0].client_certificate)
@@ -30,7 +30,7 @@ provider "kubernetes" {
   # cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.aks.kube_config[0].cluster_ca_certificate)
   # The provider argument name "depends_on" is reserved for use by Terraform in a future version:
   # depends_on  = [null_resource.wait_for_aks]
-}
+#}
 
 
 
@@ -39,7 +39,7 @@ resource "kubernetes_namespace" "argocd" {
   metadata {
     name = "argocd"
   }
-  depends_on = [null_resource.fetch_kubeconfig]
+  depends_on = [null_resource.aks_ready]
 }
 
 resource "helm_release" "argo_cd" {
