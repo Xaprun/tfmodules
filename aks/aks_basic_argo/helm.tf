@@ -20,8 +20,8 @@ resource "null_resource" "aks_ready" {
 # }
 
 
-#provider "kubernetes" {
-  # config_path = "~/.kube/config"
+provider "kubernetes" {
+  config_path = "~/.kube/config"
   # config_path = local_file.kubeconfig.filename
   # depends_on  = [null_resource.fetch_kubeconfig]
   # host                   = azurerm_kubernetes_cluster.aks.kube_config[0].host
@@ -30,7 +30,7 @@ resource "null_resource" "aks_ready" {
   # cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.aks.kube_config[0].cluster_ca_certificate)
   # The provider argument name "depends_on" is reserved for use by Terraform in a future version:
   # depends_on  = [null_resource.wait_for_aks]
-#}
+}
 
 
 
