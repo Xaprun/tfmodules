@@ -15,6 +15,8 @@ resource "null_resource" "fetch_kubeconfig" {
 resource "local_file" "kubeconfig" {
   content  = file("kubeconfig_aks")
   filename = "${path.module}/kubeconfig_aks"
+  depends_on  = [null_resource.fetch_kubeconfig]
+  
 }
 
 
