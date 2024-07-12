@@ -1,8 +1,8 @@
 # null_resource to wait for AKS cluster to be ready and fetch kubeconfig
 resource "null_resource" "fetch_kubeconfig" {
   provisioner "local-exec" {
-    command = "echo 'Waiting for AKS to be ready...'"
-    # command = "az aks get-credentials --resource-group tf-aks-we-rg --name tf-aks --file kubeconfig_aks"
+    # command = "echo 'Waiting for AKS to be ready...'"
+     command = "az aks get-credentials --resource-group tf-aks-we-rg --name tf-aks --file kubeconfig_aks"
     # command = "az aks get-credentials --resource-group tf-aks-we-rg --name tf-aks --overwrite-existing"
   }
 
