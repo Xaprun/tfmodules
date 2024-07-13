@@ -1,15 +1,11 @@
 # null_resource to wait for AKS cluster to be ready and fetch kubeconfig
-# resource "null_resource" "aks_ready" {
-#   provisioner "local-exec" {
-#     command = "echo 'Waiting for AKS to be ready...'"
-#     # command = "az aks get-credentials --resource-group tf-aks-we-rg --name tf-aks --file kubeconfig_aks"
-#     # command = "az aks get-credentials --resource-group tf-aks-we-rg --name tf-aks --overwrite-existing"
-#   }
+resource "null_resource" "aks_ready" {
+  provisioner "local-exec" {
+    command = "az aks get-credentials --resource-group tf-aks-we-rg --name tf-aks --overwrite-existing"
+  }
 
-#   depends_on = [
-#     azurerm_kubernetes_cluster.aks
-#   ]
-# }
+  depends_on = [azurerm_kubernetes_cluster.aks]
+}
 
 provider "kubernetes" {
   config_path = "~/.kube/config"
@@ -20,6 +16,16 @@ provider "kubernetes" {
   # cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.aks.kube_config[0].cluster_ca_certificate)
 }
 
+#Install Argo CD using Helm
+resource "null_resource" "install_argocd" {
+  provisioner "local-exec" {
+    command = "helm repo add argo https://argoproj.github.io/argo-helm && helm repo update && helm install argo-cd argo/argo-cd --namespace argocd --create-namespace"
+  }
+  #depends_on = [null_resource.create_namespace]
+  depends_on = [null_resource.aks_ready]
+}
+
+# NIE DZIAŁA
 # resource "kubernetes_namespace" "argocd" {
 #   metadata {
 #     name = "argocd"
