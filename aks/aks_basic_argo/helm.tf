@@ -1,15 +1,15 @@
 # null_resource to wait for AKS cluster to be ready and fetch kubeconfig
-resource "null_resource" "aks_ready" {
-  provisioner "local-exec" {
-    command = "echo 'Waiting for AKS to be ready...'"
-    # command = "az aks get-credentials --resource-group tf-aks-we-rg --name tf-aks --file kubeconfig_aks"
-    # command = "az aks get-credentials --resource-group tf-aks-we-rg --name tf-aks --overwrite-existing"
-  }
+# resource "null_resource" "aks_ready" {
+#   provisioner "local-exec" {
+#     command = "echo 'Waiting for AKS to be ready...'"
+#     # command = "az aks get-credentials --resource-group tf-aks-we-rg --name tf-aks --file kubeconfig_aks"
+#     # command = "az aks get-credentials --resource-group tf-aks-we-rg --name tf-aks --overwrite-existing"
+#   }
 
-  depends_on = [
-    azurerm_kubernetes_cluster.aks
-  ]
-}
+#   depends_on = [
+#     azurerm_kubernetes_cluster.aks
+#   ]
+# }
 
 provider "kubernetes" {
   config_path = "~/.kube/config"
@@ -20,10 +20,10 @@ provider "kubernetes" {
   # cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.aks.kube_config[0].cluster_ca_certificate)
 }
 
-resource "kubernetes_namespace" "argocd" {
-  metadata {
-    name = "argocd"
-  }
-  depends_on = [null_resource.aks_ready]
-}
+# resource "kubernetes_namespace" "argocd" {
+#   metadata {
+#     name = "argocd"
+#   }
+#   depends_on = [null_resource.aks_ready]
+# }
 
