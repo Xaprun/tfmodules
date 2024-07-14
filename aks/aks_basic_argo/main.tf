@@ -28,12 +28,3 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
-resource "azurerm_public_ip" "aks-ip" {
-  count               = 1
-  name                = "${var.aks_cluster_name}-public-ip"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  allocation_method   = "Dynamic"
-  sku                 = "Basic"
-}
-
