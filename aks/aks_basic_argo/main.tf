@@ -73,11 +73,11 @@ resource "azurerm_log_analytics_workspace" "alaw_aks" {
 ####################################################
 
 # Tworzenie konfiguracji monitoringu dla klastra AKS
-resource "azurerm_kubernetes_cluster_monitoring" "akcm" {
-  depends_on          = [azurerm_kubernetes_cluster.aks, azurerm_log_analytics_workspace.alaw_aks]
-  cluster_id          = azurerm_kubernetes_cluster.aks.id
-  log_analytics_workspace_id = azurerm_log_analytics_workspace.alaw_aks.id
-}
+# resource "azurerm_kubernetes_cluster_monitoring" "akcm" {
+#   depends_on          = [azurerm_kubernetes_cluster.aks, azurerm_log_analytics_workspace.alaw_aks]
+#   cluster_id          = azurerm_kubernetes_cluster.aks.id
+#   log_analytics_workspace_id = azurerm_log_analytics_workspace.alaw_aks.id
+# }
 
 # Tworzenie usługi zarządzanego Prometheusa
 resource "azurerm_monitor_diagnostic_setting" "aks_diagnostics" {
@@ -102,10 +102,6 @@ resource "azurerm_monitor_diagnostic_setting" "aks_diagnostics" {
     content {
       category = log.value
       enabled  = true
-      retention_policy {
-        days    = 30
-        enabled = true
-      }
     }
   }
 
@@ -117,9 +113,26 @@ resource "azurerm_monitor_diagnostic_setting" "aks_diagnostics" {
     content {
       category = metric.value
       enabled  = true
-      retention_policy {
-        days    = 30
-        enabled = true
+    }
+  }
+}
+
+# Polityka zarządzania retencją dla przestrzeni nazw Log Analytics
+resource "azurerm_storage_management_policy" "log_analytics_retention" {
+  storage_account_id = azurerm_log_analytics_workspace.example.id
+
+  rule {
+    name    = "retention"
+    enabled = true
+    filters {
+      blob_types = ["blockBlob"]
+    }
+
+    actions {
+      base_blob {
+        delete {
+          days_after_modification_greater_than = 30
+        }
       }
     }
   }
