@@ -101,7 +101,7 @@ resource "azurerm_monitor_diagnostic_setting" "aks_diagnostics" {
 
     content {
       category = log.value
-      enabled  = true
+      # enabled  = true
     }
   }
 
