@@ -119,7 +119,7 @@ resource "azurerm_monitor_diagnostic_setting" "aks_diagnostics" {
 
 # Polityka zarządzania retencją dla przestrzeni nazw Log Analytics
 resource "azurerm_storage_management_policy" "log_analytics_retention" {
-  storage_account_id = azurerm_log_analytics_workspace.example.id
+  storage_account_id = azurerm_log_analytics_workspace.alaw_aks.id
 
   rule {
     name    = "retention"
