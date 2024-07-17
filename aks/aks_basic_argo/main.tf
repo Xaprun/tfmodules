@@ -94,7 +94,7 @@ resource "azurerm_monitor_diagnostic_setting" "aks_diagnostics" {
       "guard",
       "kube-audit",
       "kube-audit-admin",
-      "kube-audit-error",
+      #"kube-audit-error",
       "kube-authentication",
       "kube-authentication-error"
     ]
