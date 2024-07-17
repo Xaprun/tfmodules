@@ -1,3 +1,6 @@
+####################################################
+################  Variables  #######################
+####################################################
 variable "resource_group_name" {
   description = "The name of the resource group"
   type        = string
@@ -24,4 +27,16 @@ variable "node_vm_size" {
   description = "The size of the VM in the node pool"
   type        = string
   default     = "Standard_DS2_v2"
+}
+####################################################
+###################  Locals  #######################
+####################################################
+locals {
+  common_tags = {
+    Environment = "dev"
+    Project     = "not defined"
+    Owner       = "itsaj"
+    branch      = "Calico"
+    module      = "aks_basic_argo"
+  }
 }

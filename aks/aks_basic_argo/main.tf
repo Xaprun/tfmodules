@@ -1,6 +1,24 @@
+####################################################
+################  PROVIDER  ########################
+####################################################
+
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0"
+    }
+  }
+  required_version = ">= 1.0"
+}
+
 provider "azurerm" {
   features {}
 }
+
+####################################################
+################ AKS Cluster #######################
+####################################################
 
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = var.aks_cluster_name
@@ -25,10 +43,32 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
 
-  tags = {
-    Environment = "Development"
-    branch = "Calico"
-    module = "aks_basic_argo"
-  }
+  tags = merge(
+    local.common_tags,
+    {
+      TagOption = "merged"
+    }
+  )
 }
+
+####################################################
+################  Log Analytics  ###################
+####################################################
+
+# Tworzenie przestrzeni nazw Log Analytics
+resource "azurerm_log_analytics_workspace" "example" {
+  name                = "${var.aks_cluster_name}-log-analytics"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  sku                 = "PerGB2018"
+
+  # usually 30
+  retention_in_days = 5
+
+  tags = local.common_tags
+ 
+  
+}
+
+
 
