@@ -56,7 +56,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 ####################################################
 
 # Tworzenie przestrzeni nazw Log Analytics
-resource "azurerm_log_analytics_workspace" "example" {
+resource "azurerm_log_analytics_workspace" "alaw_aks" {
   name                = "${var.aks_cluster_name}-log-analytics"
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -65,10 +65,62 @@ resource "azurerm_log_analytics_workspace" "example" {
   # usually 30
   retention_in_days = 5
 
-  tags = local.common_tags
- 
-  
+  tags = local.common_tags 
 }
 
+####################################################
+###################  PROMETHEUS  ###################
+####################################################
 
+# Tworzenie konfiguracji monitoringu dla klastra AKS
+resource "azurerm_kubernetes_cluster_monitoring" "akcm" {
+  depends_on          = [azurerm_kubernetes_cluster.aks, azurerm_log_analytics_workspace.alaw_aks]
+  cluster_id          = azurerm_kubernetes_cluster.aks.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.alaw_aks.id
+}
 
+# Tworzenie usługi zarządzanego Prometheusa
+resource "azurerm_monitor_diagnostic_setting" "aks_diagnostics" {
+  name               = "aks-diagnostics"
+  target_resource_id = azurerm_kubernetes_cluster.aks.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.alaw_aks.id
+
+   dynamic "log" {
+    for_each = [
+      "kube-apiserver",
+      "kube-controller-manager",
+      "kube-scheduler",
+      "cluster-autoscaler",
+      "guard",
+      "kube-audit",
+      "kube-audit-admin",
+      "kube-audit-error",
+      "kube-authentication",
+      "kube-authentication-error"
+    ]
+
+    content {
+      category = log.value
+      enabled  = true
+      retention_policy {
+        days    = 30
+        enabled = true
+      }
+    }
+  }
+
+  dynamic "metric" {
+    for_each = [
+      "AllMetrics"
+    ]
+
+    content {
+      category = metric.value
+      enabled  = true
+      retention_policy {
+        days    = 30
+        enabled = true
+      }
+    }
+  }
+}
