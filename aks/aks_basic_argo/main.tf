@@ -63,7 +63,7 @@ resource "azurerm_log_analytics_workspace" "alaw_aks" {
   sku                 = "PerGB2018"
 
   # usually 30
-  retention_in_days = 7
+  # retention_in_days = 7
 
   tags = local.common_tags 
 }
