@@ -85,7 +85,7 @@ resource "azurerm_monitor_diagnostic_setting" "aks_diagnostics" {
   target_resource_id = azurerm_kubernetes_cluster.aks.id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.alaw_aks.id
 
-   dynamic "log" {
+   dynamic "enabled_log" {
     for_each = [
       "kube-apiserver",
       "kube-controller-manager",
