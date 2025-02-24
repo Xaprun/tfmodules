@@ -30,18 +30,21 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
 # Dodatkowa pula węzłów (opcjonalna)
 resource "azurerm_kubernetes_cluster_node_pool" "extra_pool" {
-  count                = var.enable_additional_pool ? 1 : 0
-  name                 = var.additional_pool_name
-  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
-  vm_size              = var.additional_pool_vm_size
-  node_count           = var.additional_pool_node_count
+  count                  = var.enable_additional_pool ? 1 : 0
+  name                   = var.additional_pool_name
+  kubernetes_cluster_id  = azurerm_kubernetes_cluster.aks.id
+  vm_size                = var.additional_pool_vm_size
+  node_count             = var.additional_pool_node_count
+  max_pods               = 110
 
-  # Umożliwiamy auto-scaling
-  enable_auto_scaling  = true
-  min_count            = var.additional_pool_min_count
-  max_count            = var.additional_pool_max_count
+  # Auto-scaling za pomocą scale_settings
+  scale_settings {
+    mode      = "AutoScale"
+    min_size  = var.additional_pool_min_count
+    max_size  = var.additional_pool_max_count
+  }
 
-  # Przykładowa etykieta, np. do kierowania ruchu
+  # Etykiety dla dodatkowej puli
   node_labels = {
     "pool" = var.additional_pool_name
   }
