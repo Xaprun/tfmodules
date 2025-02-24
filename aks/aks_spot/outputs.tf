@@ -10,3 +10,10 @@ output "aks_fqdn" {
 output "aks_public_ip" {
   value = azurerm_public_ip.example[0].ip_address
 }
+output "aks_name" {
+  value = azurerm_kubernetes_cluster.aks.name
+}
+
+
+
+
