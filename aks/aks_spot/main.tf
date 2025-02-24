@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 4.0.0"
+      version = ">= 3.64.0"
     }
   }
 }
@@ -42,12 +42,10 @@ resource "azurerm_kubernetes_cluster_node_pool" "extra_pool" {
   node_count             = var.additional_pool_node_count
   max_pods               = 110
 
-  # Auto-scaling za pomocą scale_settings
-  scale_settings {
-    mode      = "AutoScale"
-    min_size  = var.additional_pool_min_count
-    max_size  = var.additional_pool_max_count
-  }
+  # Zamiana scale_settings na enable_auto_scaling
+  enable_auto_scaling = true
+  min_count           = var.additional_pool_min_count
+  max_count           = var.additional_pool_max_count
 
   # Etykiety dla dodatkowej puli
   node_labels = {
