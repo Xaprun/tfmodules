@@ -43,7 +43,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "extra_pool" {
   max_pods               = 110
 
   # Zamiana scale_settings na enable_auto_scaling
-  enable_auto_scaling = true
+  # enable_auto_scaling = true
   min_count           = var.additional_pool_min_count
   max_count           = var.additional_pool_max_count
 
