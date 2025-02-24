@@ -7,6 +7,10 @@ terraform {
   }
 }
 
+provider "azurerm" {
+  features {}
+}
+
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = var.aks_cluster_name
   location            = var.location
