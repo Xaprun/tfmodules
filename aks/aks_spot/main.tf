@@ -81,4 +81,7 @@ resource "azurerm_public_ip" "example" {
   resource_group_name = var.resource_group_name
   allocation_method   = "Dynamic"
   sku                 = "Basic"
+  depends_on = [
+    azurerm_resource_group.aks_rg
+  ]
 }
