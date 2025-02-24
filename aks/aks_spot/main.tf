@@ -18,6 +18,10 @@ resource "azurerm_kubernetes_cluster" "aks" {
   resource_group_name = var.resource_group_name
   dns_prefix          = var.aks_cluster_name
 
+  depends_on = [
+    azurerm_resource_group.aks_rg
+  ]
+
   default_node_pool {
     name       = "default"
     node_count = var.node_count
