@@ -4,6 +4,11 @@ terraform {
       source  = "hashicorp/azurerm"
       version = ">= 3.64.0"
     }
+  backend "azurerm" {
+    resource_group_name  = "nazwa-resource-group"
+    storage_account_name = "nazwa-konta-storage"
+    container_name       = "tfstate"          # lub inna nazwa, nie używaj $web jeśli chcesz pełną kontrolę
+    key                  = "terraform.tfstate"
   }
 }
 
