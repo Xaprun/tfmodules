@@ -1,9 +1,31 @@
-
+###################################
+# RG to group all resources
+###################################
 resource "azurerm_resource_group" "aks_rg" {
   name     = var.resource_group_name
   location = var.location
 }
 
+###################################
+# Private network and subnet
+###################################
+resource "azurerm_virtual_network" "aks_vnet" {
+  name                = "aks-vnet"
+  address_space       = ["10.0.0.0/16"]
+  location            = var.location
+  resource_group_name = var.resource_group_name
+}
+
+resource "azurerm_subnet" "aks_subnet" {
+  name                 = "aks-subnet"
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = azurerm_virtual_network.aks_vnet.name
+  address_prefixes     = ["10.0.1.0/24"]
+}
+
+###################################
+# AKS cluster configuration
+###################################
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = var.aks_cluster_name
   location            = var.location
@@ -12,12 +34,14 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   depends_on = [
     azurerm_resource_group.aks_rg
+    azurerm_subnet.aks_subnet
   ]
 
   default_node_pool {
     name       = "default"
     node_count = var.node_count
     vm_size    = var.node_vm_size
+    vnet_subnet_id = azurerm_subnet.aks_subnet.id
   }
 
   identity {
@@ -27,6 +51,10 @@ resource "azurerm_kubernetes_cluster" "aks" {
   network_profile {
     network_plugin    = "azure"
     load_balancer_sku = "standard"
+    network_policy    = "azure"
+    dns_service_ip    = "10.0.0.10"
+    docker_bridge_cidr= "172.17.0.1/16"
+    service_cidr      = "10.0.0.0/16"
   }
 
   tags = {
