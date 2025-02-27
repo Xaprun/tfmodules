@@ -1,0 +1,16 @@
+name: Reuse TF scaning workflow
+
+on:
+  push:
+    branches:
+       - main
+    # Uncommento to stop triggers on changes of the workflow
+    # comment to trigger on "TF testing" script development
+    # paths:
+    #   - 'TF/**'
+      
+jobs:
+  call_tf_testing:
+    uses: Xaprun/terraform-ci-cd/.github/workflows/tf-scan-bundle.yml@main
+    with:
+      branch: main
