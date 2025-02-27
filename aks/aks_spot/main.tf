@@ -64,7 +64,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     load_balancer_sku  = "standard"
     network_policy     = "azure"
     dns_service_ip     = "10.0.0.10"
-    docker_bridge_cidr = "172.17.0.1/16"
+    # docker_bridge_cidr = "172.17.0.1/16" # excuded due to validation  process
     service_cidr       = "10.0.0.0/16"
   }
 
