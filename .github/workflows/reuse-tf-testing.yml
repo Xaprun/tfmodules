@@ -17,3 +17,4 @@ jobs:
     uses: xaprun/terraform-ci-cd/.github/workflows/tf-scan-bundle.yml@main
     with:
       branch: main
+
