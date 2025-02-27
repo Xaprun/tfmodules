@@ -49,9 +49,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
   ]
 
   default_node_pool {
-    name       = "default"
-    node_count = var.node_count
-    vm_size    = var.node_vm_size
+    name           = "default"
+    node_count     = var.node_count
+    vm_size        = var.node_vm_size
     vnet_subnet_id = azurerm_subnet.aks_subnet.id
   }
 
@@ -60,12 +60,12 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   network_profile {
-    network_plugin    = "azure"
-    load_balancer_sku = "standard"
-    network_policy    = "azure"
-    dns_service_ip    = "10.0.0.10"
-    docker_bridge_cidr= "172.17.0.1/16"
-    service_cidr      = "10.0.0.0/16"
+    network_plugin     = "azure"
+    load_balancer_sku  = "standard"
+    network_policy     = "azure"
+    dns_service_ip     = "10.0.0.10"
+    docker_bridge_cidr = "172.17.0.1/16"
+    service_cidr       = "10.0.0.0/16"
   }
 
   tags = {
@@ -75,17 +75,17 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
 # Dodatkowa pula węzłów (opcjonalna)
 resource "azurerm_kubernetes_cluster_node_pool" "extra_pool" {
-  count                  = var.enable_additional_pool ? 1 : 0
-  name                   = var.additional_pool_name
-  kubernetes_cluster_id  = azurerm_kubernetes_cluster.aks.id
-  vm_size                = var.additional_pool_vm_size
-  node_count             = var.additional_pool_node_count
-  max_pods               = 110
+  count                 = var.enable_additional_pool ? 1 : 0
+  name                  = var.additional_pool_name
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
+  vm_size               = var.additional_pool_vm_size
+  node_count            = var.additional_pool_node_count
+  max_pods              = 110
 
   # Zamiana scale_settings na enable_auto_scaling
   # enable_auto_scaling = true
-  min_count           = var.additional_pool_min_count
-  max_count           = var.additional_pool_max_count
+  min_count = var.additional_pool_min_count
+  max_count = var.additional_pool_max_count
 
   # Etykiety dla dodatkowej puli
   node_labels = {
