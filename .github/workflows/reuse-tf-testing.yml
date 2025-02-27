@@ -7,7 +7,7 @@ on:
     # Uncommento to stop triggers on changes of the workflow
     # comment to trigger on "TF testing" script development
     # paths:
-    #   - 'TF/**'
+    #   - 'AKS/**'
     
 permissions:
   contents: read   
@@ -17,4 +17,5 @@ jobs:
     uses: xaprun/terraform-ci-cd/.github/workflows/tf-scan-bundle.yml@main
     with:
       branch: main
+      path: ./AKS/aks_spot
 
