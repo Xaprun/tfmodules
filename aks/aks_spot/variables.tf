@@ -1,7 +1,8 @@
-variable "aks_cluster_authorized_ip"
+variable "aks_cluster_authorized_ip" {
   type        = array
   description = "Adresy IP, z których można komunikować się z klastrem AKS"
-  # default     = ["10.0.0.0/16", "192.168.0.0/16"]
+  default     = ["10.0.0.0/16", "192.168.0.0/16"]
+}
 
 variable "aks_cluster_name" {
   type        = string
