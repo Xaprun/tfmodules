@@ -8,7 +8,10 @@ on:
     # comment to trigger on "TF testing" script development
     # paths:
     #   - 'TF/**'
-      
+    
+permissions:
+  contents: read   
+  
 jobs:
   call_tf_testing:
     uses: Xaprun/terraform-ci-cd/.github/workflows/tf-scan-bundle.yml@main
