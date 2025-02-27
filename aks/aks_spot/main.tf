@@ -39,10 +39,11 @@ resource "azurerm_subnet" "aks_subnet" {
 # AKS cluster configuration
 ###################################
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                = var.aks_cluster_name
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  dns_prefix          = var.aks_cluster_name
+  name                            = var.aks_cluster_name
+  location                        = var.location
+  resource_group_name             = var.resource_group_name
+  dns_prefix                      = var.aks_cluster_name
+  api_server_authorized_ip_ranges = var.aks_cluster_authorized_ip   #["192.168.", "192.168.0.0/16"]
 
   depends_on = [
     azurerm_resource_group.aks_rg,
