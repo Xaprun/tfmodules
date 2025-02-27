@@ -33,7 +33,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   dns_prefix          = var.aks_cluster_name
 
   depends_on = [
-    azurerm_resource_group.aks_rg
+    azurerm_resource_group.aks_rg,
     azurerm_subnet.aks_subnet
   ]
 
