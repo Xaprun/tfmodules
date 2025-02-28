@@ -60,10 +60,10 @@ resource "azurerm_kubernetes_cluster" "aks" {
     authorized_ip_ranges = var.aks_cluster_authorized_ip   # Upewnij się, że zmienna jest listą adresów CIDR
   }
   
-  azure_active_directory {
-    managed                = true
-    admin_group_object_ids = ["<AAD_Group_Object_ID>"] # ID grupy AAD z uprawnieniami administratora
-  }
+  # azure_active_directory {
+  #  managed                = true
+  #  admin_group_object_ids = ["<AAD_Group_Object_ID>"] # ID grupy AAD z uprawnieniami administratora
+  # }
   role_based_access_control_enabled = true
 
   oms_agent {
