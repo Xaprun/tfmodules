@@ -60,9 +60,15 @@ resource "azurerm_kubernetes_cluster" "aks" {
     authorized_ip_ranges = var.aks_cluster_authorized_ip   # Upewnij się, że zmienna jest listą adresów CIDR
   }
 
-  monitoring_addon {
-    enabled                    = true
-    log_analytics_workspace_id = azurerm_log_analytics_workspace.example.id
+  addon_profile {
+    kube_dashboard {
+      enabled = false
+    }
+
+    oms_agent {
+      enabled                    = true
+      log_analytics_workspace_id = azurerm_log_analytics_workspace.example.id
+    }
   }
 
   depends_on = [
