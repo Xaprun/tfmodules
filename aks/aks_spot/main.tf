@@ -6,10 +6,11 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 4.0.0"
+      version = ">= 4.0.0" # Używamy wersji 4.x.x lub wyższej, aby obsłużyć nowe bloki
     }
   }
 }
+
 ###################################
 # RG to group all resources
 ###################################
@@ -44,25 +45,23 @@ resource "azurerm_kubernetes_cluster" "aks" {
   resource_group_name             = var.resource_group_name
   dns_prefix                      = var.aks_cluster_name
  
-  # api_server_authorized_ip_ranges = var.aks_cluster_authorized_ip  #obsolete
+  # Wymaga wersji >= 4.x.x
   api_server_access_profile {
     authorized_ip_ranges = var.aks_cluster_authorized_ip
   }
-  
-  # 4.0.0 supported?
-  # rbac_enabled = true # wrong
+
+  # Zastępuje `rbac_enabled`, wymagane w >= 4.x.x
   role_based_access_control {
     enabled = true
   }
-  # not supported >= 4.0.0
-  # role_based_access_control {
-  #  enabled = true
-  # }
 
-  depends_on = [
-    azurerm_resource_group.aks_rg,
-    azurerm_subnet.aks_subnet
-  ]
+  # Zastępuje `monitoring_enabled`, wymagane w >= 4.x.x
+  addon_profile {
+    oms_agent {
+      enabled                    = true
+      log_analytics_workspace_id = azurerm_log_analytics_workspace.example.id
+    }
+  }
 
   default_node_pool {
     name           = "default"
@@ -80,21 +79,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     load_balancer_sku  = "standard"
     network_policy     = "azure"
     dns_service_ip     = "10.0.0.10"
-    # docker_bridge_cidr = "172.17.0.1/16" # excuded due to validation  process
     service_cidr       = "10.0.0.0/16"
-    # private_cluster_enabled = true #validate:not expected here
-  }
-
-  # monitoring_enabled     = true
-  # oms_agent_identity {
-  #   type = "SystemAssigned"
-  # }
-  
-  addon_profile {
-    oms_agent {
-      enabled                    = true
-      log_analytics_workspace_id = azurerm_log_analytics_workspace.example.id
-    }
   }
 
   tags = {
@@ -111,25 +96,17 @@ resource "azurerm_kubernetes_cluster_node_pool" "extra_pool" {
   node_count            = var.additional_pool_node_count
   max_pods              = 110
 
-  # Zamiana scale_settings na enable_auto_scaling
-  # enable_auto_scaling = true
   min_count = var.additional_pool_min_count
   max_count = var.additional_pool_max_count
 
-  # Etykiety dla dodatkowej puli
   node_labels = {
     "pool" = var.additional_pool_name
   }
 
-  # W zależności od trybu puli (Standard/Spot)
   priority        = var.additional_pool_mode == "Spot" ? "Spot" : "Regular"
   eviction_policy = var.additional_pool_mode == "Spot" ? "Delete" : null
   spot_max_price  = var.additional_pool_mode == "Spot" ? -1 : null
 
-  # Można również ustawić orchestrator_version
-  # orchestrator_version = azurerm_kubernetes_cluster.aks.kubernetes_version
-
-  # Tryb puli: User (zalecany dla dodatkowych pooli)
   mode = "User"
 }
 
@@ -141,15 +118,12 @@ resource "azurerm_public_ip" "example" {
   resource_group_name = var.resource_group_name
   allocation_method   = "Dynamic"
   sku                 = "Basic"
-  depends_on = [
-    azurerm_resource_group.aks_rg
-  ]
 }
 
-# obsolete?
+# Log Analytics Workspace - wymagane dla OMS Agent
 resource "azurerm_log_analytics_workspace" "example" {
- name                = "${var.aks_cluster_name}-log-analytics"
- location            = var.location
- resource_group_name = var.resource_group_name
- sku                 = "PerGB2018"
+  name                = "${var.aks_cluster_name}-log-analytics"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  sku                 = "PerGB2018"
 }
