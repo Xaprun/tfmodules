@@ -100,7 +100,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     network_plugin    = "azure"
     load_balancer_sku = "standard"
     network_policy    = "azure"
-    dns_service_ip    = "10.0.0.10"
+    dns_service_ip    = "10.1.0.10"
     service_cidr      = "10.1.0.0/16"
   }
 
