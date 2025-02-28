@@ -6,13 +6,23 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 4.0.0" # Używamy wersji 4.x.x lub wyższej, aby obsłużyć nowe bloki
+      version = ">= 4.0.0"   # Wymagamy wersji 4.x.x lub nowszej
     }
   }
 }
 
 ###################################
-# RG to group all resources
+# Log Analytics Workspace for OMS Agent
+###################################
+resource "azurerm_log_analytics_workspace" "example" {
+  name                = "${var.aks_cluster_name}-log-analytics"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  sku                 = "PerGB2018"
+}
+
+###################################
+# Resource Group
 ###################################
 resource "azurerm_resource_group" "aks_rg" {
   name     = var.resource_group_name
@@ -20,7 +30,7 @@ resource "azurerm_resource_group" "aks_rg" {
 }
 
 ###################################
-# Private network and subnet
+# Virtual Network and Subnet
 ###################################
 resource "azurerm_virtual_network" "aks_vnet" {
   name                = "aks-vnet"
@@ -37,31 +47,43 @@ resource "azurerm_subnet" "aks_subnet" {
 }
 
 ###################################
-# AKS cluster configuration
+# AKS Cluster Configuration
 ###################################
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                            = var.aks_cluster_name
-  location                        = var.location
-  resource_group_name             = var.resource_group_name
-  dns_prefix                      = var.aks_cluster_name
- 
-  # Wymaga wersji >= 4.x.x
+  name                = var.aks_cluster_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  dns_prefix          = var.aks_cluster_name
+
+  # Nowy sposób ograniczenia dostępu do API serwera AKS
   api_server_access_profile {
-    authorized_ip_ranges = var.aks_cluster_authorized_ip
+    authorized_ip_ranges = var.aks_cluster_authorized_ip   # Upewnij się, że zmienna jest listą adresów CIDR
   }
 
-  # Zastępuje `rbac_enabled`, wymagane w >= 4.x.x
+  /*
+    W starszych wersjach używano argumentu "rbac_enabled".
+    Od azurerm 4.x.x należy użyć bloku "role_based_access_control".
+    Dzięki temu włączamy RBAC dla klastra, co zwiększa bezpieczeństwo.
+  */
   role_based_access_control {
     enabled = true
   }
 
-  # Zastępuje `monitoring_enabled`, wymagane w >= 4.x.x
+  /*
+    Konfiguracja OMS Agent (do logowania) została przeniesiona do bloku "addon_profile".
+    W tym bloku określamy, że OMS Agent jest włączony oraz podajemy identyfikator Log Analytics Workspace.
+  */
   addon_profile {
     oms_agent {
       enabled                    = true
       log_analytics_workspace_id = azurerm_log_analytics_workspace.example.id
     }
   }
+
+  depends_on = [
+    azurerm_resource_group.aks_rg,
+    azurerm_subnet.aks_subnet
+  ]
 
   default_node_pool {
     name           = "default"
@@ -75,11 +97,11 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   network_profile {
-    network_plugin     = "azure"
-    load_balancer_sku  = "standard"
-    network_policy     = "azure"
-    dns_service_ip     = "10.0.0.10"
-    service_cidr       = "10.0.0.0/16"
+    network_plugin    = "azure"
+    load_balancer_sku = "standard"
+    network_policy    = "azure"
+    dns_service_ip    = "10.0.0.10"
+    service_cidr      = "10.0.0.0/16"
   }
 
   tags = {
@@ -87,7 +109,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
-# Dodatkowa pula węzłów (opcjonalna)
+###################################
+# Opcjonalny: Dodatkowa pula węzłów
+###################################
 resource "azurerm_kubernetes_cluster_node_pool" "extra_pool" {
   count                 = var.enable_additional_pool ? 1 : 0
   name                  = var.additional_pool_name
@@ -110,7 +134,9 @@ resource "azurerm_kubernetes_cluster_node_pool" "extra_pool" {
   mode = "User"
 }
 
+###################################
 # Public IP (przykład)
+###################################
 resource "azurerm_public_ip" "example" {
   count               = 1
   name                = "${var.aks_cluster_name}-public-ip"
@@ -118,12 +144,7 @@ resource "azurerm_public_ip" "example" {
   resource_group_name = var.resource_group_name
   allocation_method   = "Dynamic"
   sku                 = "Basic"
-}
-
-# Log Analytics Workspace - wymagane dla OMS Agent
-resource "azurerm_log_analytics_workspace" "example" {
-  name                = "${var.aks_cluster_name}-log-analytics"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  sku                 = "PerGB2018"
+  depends_on = [
+    azurerm_resource_group.aks_rg
+  ]
 }
