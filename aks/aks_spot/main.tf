@@ -60,24 +60,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
     authorized_ip_ranges = var.aks_cluster_authorized_ip   # Upewnij się, że zmienna jest listą adresów CIDR
   }
 
-  /*
-    W starszych wersjach używano argumentu "rbac_enabled".
-    Od azurerm 4.x.x należy użyć bloku "role_based_access_control".
-    Dzięki temu włączamy RBAC dla klastra, co zwiększa bezpieczeństwo.
-  */
-  role_based_access_control {
-    enabled = true
-  }
-
-  /*
-    Konfiguracja OMS Agent (do logowania) została przeniesiona do bloku "addon_profile".
-    W tym bloku określamy, że OMS Agent jest włączony oraz podajemy identyfikator Log Analytics Workspace.
-  */
-  addon_profile {
-    oms_agent {
-      enabled                    = true
-      log_analytics_workspace_id = azurerm_log_analytics_workspace.example.id
-    }
+  monitoring_addon {
+    enabled                    = true
+    log_analytics_workspace_id = azurerm_log_analytics_workspace.example.id
   }
 
   depends_on = [
