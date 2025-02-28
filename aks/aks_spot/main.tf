@@ -44,10 +44,10 @@ resource "azurerm_kubernetes_cluster" "aks" {
   resource_group_name             = var.resource_group_name
   dns_prefix                      = var.aks_cluster_name
  
-  api_server_authorized_ip_ranges = var.aks_cluster_authorized_ip  
-  # api_server_access_profile {
-  #  authorized_ip_ranges = var.aks_cluster_authorized_ip
-  # }
+  # api_server_authorized_ip_ranges = var.aks_cluster_authorized_ip  #obsolete
+  api_server_access_profile {
+    authorized_ip_ranges = var.aks_cluster_authorized_ip
+  }
 
 
 
@@ -74,6 +74,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     dns_service_ip     = "10.0.0.10"
     # docker_bridge_cidr = "172.17.0.1/16" # excuded due to validation  process
     service_cidr       = "10.0.0.0/16"
+    private_cluster_enabled = true
   }
 
   tags = {
