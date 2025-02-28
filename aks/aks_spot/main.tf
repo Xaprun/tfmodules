@@ -48,10 +48,13 @@ resource "azurerm_kubernetes_cluster" "aks" {
   api_server_access_profile {
     authorized_ip_ranges = var.aks_cluster_authorized_ip
   }
-
-  role_based_access_control {
-    enabled = true
-  }
+  
+  # 4.0.0 supported?
+  rbac_enabled = true
+  # not supported >= 4.0.0
+  # role_based_access_control {
+  #  enabled = true
+  # }
 
   depends_on = [
     azurerm_resource_group.aks_rg,
@@ -79,12 +82,17 @@ resource "azurerm_kubernetes_cluster" "aks" {
     # private_cluster_enabled = true #validate:not expected here
   }
 
-  addon_profile {
-    oms_agent {
-      enabled                    = true
-      log_analytics_workspace_id = azurerm_log_analytics_workspace.example.id
-    }
+  monitoring_enabled     = true
+  oms_agent_identity {
+    type = "SystemAssigned"
   }
+  #obsolete:
+  # addon_profile {
+  #  oms_agent {
+  #    enabled                    = true
+  #    log_analytics_workspace_id = azurerm_log_analytics_workspace.example.id
+  #  }
+  #}
 
   tags = {
     Environment = "Development"
@@ -135,10 +143,10 @@ resource "azurerm_public_ip" "example" {
   ]
 }
 
-# required by tfsec
-resource "azurerm_log_analytics_workspace" "example" {
-  name                = "${var.aks_cluster_name}-log-analytics"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  sku                 = "PerGB2018"
-}
+# obsolete?
+# resource "azurerm_log_analytics_workspace" "example" {
+# name                = "${var.aks_cluster_name}-log-analytics"
+# location            = var.location
+# resource_group_name = var.resource_group_name
+# sku                 = "PerGB2018"
+# }
