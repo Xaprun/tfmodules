@@ -22,3 +22,4 @@ variable "container_access_type" {
   description = "The name of the log container"
   type        = string
   default     = "private"
+}
