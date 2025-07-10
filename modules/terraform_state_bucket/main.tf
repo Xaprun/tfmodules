@@ -23,3 +23,8 @@ resource "azurerm_storage_container" "log_container" {
   storage_account_name  = azurerm_storage_account.tfstate.name
   container_access_type = var.container_access_type
 }
+
+resource "azurerm_resource_group" "rg" {
+  name     = var.resource_group_name
+  location = var.location
+}
