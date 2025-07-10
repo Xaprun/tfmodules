@@ -3,7 +3,7 @@ name: Reuse TF scaning workflow
 on:
   push:
     branches:
-       - main
+       - dev
     # Uncommento to stop triggers on changes of the workflow
     # comment to trigger on "TF testing" script development
     # paths:
