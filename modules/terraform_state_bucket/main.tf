@@ -1,3 +1,8 @@
+resource "azurerm_resource_group" "rg" {
+  name     = var.resource_group_name
+  location = var.location
+}
+
 resource "azurerm_storage_account" "tfstate" {
   name                            = "tfstateenv${var.environment}"
   resource_group_name             = var.resource_group_name
@@ -10,6 +15,7 @@ resource "azurerm_storage_account" "tfstate" {
     environment = var.environment
     purpose     = "terraform-state"
   }
+  depends_on = [azurerm_resource_group.rg]
 }
 
 resource "azurerm_storage_container" "tfstate" {
@@ -24,7 +30,4 @@ resource "azurerm_storage_container" "log_container" {
   container_access_type = var.container_access_type
 }
 
-resource "azurerm_resource_group" "rg" {
-  name     = var.resource_group_name
-  location = var.location
-}
+
