@@ -58,14 +58,8 @@ resource "azurerm_linux_virtual_machine" "vm" {
     version   = "latest"
   }
 
-  custom_data = base64encode(<<-EOF
-              #!/bin/bash
-              # Aktualizacja pakietów
-              apt-get update -y
-              # Instalacja narzędzi do analizy sieci (net-tools)
-              apt-get install -y net-tools
-            EOF
-  )
+custom_data = var.custom_data_file != "" ? base64encode(file(var.custom_data_file)) : null
+
 
   tags = {
     Environment = var.environment
