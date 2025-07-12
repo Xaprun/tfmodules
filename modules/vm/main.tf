@@ -1,4 +1,4 @@
-data "azurerm_subnet" "subnet" {
+data "azurerm_subnet" "public_subnet" {
   # name    = "prod-public-subnet-01"
   name      = var.public_subnet_name
   virtual_network_name = var.network_name
