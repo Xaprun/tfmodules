@@ -35,14 +35,13 @@ resource "azurerm_linux_virtual_machine" "vm" {
   location            = var.resource_group_location
   size                = each.value.machine_type
   # admin_username      = "kasia"
-  # requires local file !!!
-  admin_username = local.admin_username 
+  admin_username = var.admin_username 
   
   admin_ssh_key {
     # username   = "kasia"
     # public_key = file("${path.module}/ssh/kasia_key.pub")
-    username     = local.admin_username
-    public_key   = file(local.ssh_key_path)
+    username     = var.admin_username
+    public_key = file(var.admin_ssh_key_path)
   }
 
   network_interface_ids = [azurerm_network_interface.main[each.key].id]
