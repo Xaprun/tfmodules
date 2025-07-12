@@ -1,9 +1,12 @@
-data "azurerm_subnet" "public_subnet" {
-  # name    = "prod-public-subnet-01"
-  name      = var.public_subnet_name
-  virtual_network_name = var.network_name
-  resource_group_name  = var.resource_group_name 
-}
+##### Works only if resource exists #########
+# data "azurerm_subnet" "public_subnet" {
+#  # name    = "prod-public-subnet-01"
+#  name      = var.public_subnet_name
+#  virtual_network_name = var.network_name
+#  resource_group_name  = var.resource_group_name 
+# }
+#############################################
+
 resource "azurerm_public_ip" "public_ip" {
   for_each            = var.vm_config
   name                = "${each.key}-public-ip"
