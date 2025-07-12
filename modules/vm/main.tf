@@ -58,7 +58,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
     version   = "latest"
   }
 
-custom_data = var.custom_data_file != "" ? base64encode(file(var.custom_data_file)) : null
+  custom_data = var.custom_data_file != "" ? base64encode(file(var.custom_data_file)) : null
 
 
   tags = {
