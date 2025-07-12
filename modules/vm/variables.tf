@@ -44,6 +44,7 @@ variable "firewall_rules" {
 variable "public_subnet_name" {
   description = "The name of public subnet used in data"
   type        = string
+  default     = "subnet-public"
 }
 
 variable "admin_username" {
