@@ -1,3 +1,9 @@
+# variables.tf
+variable "subnet_id" {
+  description = "ID of the subnet to attach NICs to"
+  type        = string
+}
+
 variable "environment" {
   type = string
   default = "prod"
