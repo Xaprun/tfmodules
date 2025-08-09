@@ -61,8 +61,9 @@ resource "azurerm_linux_virtual_machine" "vm" {
     sku       = "11"
     version   = "latest"
   }
-
-  custom_data = var.custom_data_file != "" ? base64encode(file(var.custom_data_file)) : null
+  
+  custom_data =file(var.custom_data_file)
+  # custom_data = var.custom_data_file != "" ? base64encode(file(var.custom_data_file)) : null
   # custom_data = base64encode(<<-EOF
   #            #!/bin/bash
   #            # Aktualizacja pakietów
