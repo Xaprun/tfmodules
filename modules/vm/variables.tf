@@ -79,9 +79,10 @@ variable "image" {
   }
 }
 
+
 variable "custom_data_file" {
   description = "Path to cloud-init script or custom data file"
-  type        = string
-  default     = ""
+  type     = string
+  default  = null
+  nullable = true
 }
-
