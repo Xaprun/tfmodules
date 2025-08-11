@@ -4,21 +4,6 @@ variable "subnet_id" {
   type        = string
 }
 
-variable "environment" {
-  type = string
-  default = "prod"
-}
-
-variable "resource_group_name" {
-  description = "The name of the resource group"
-  type        = string
-}
-
-variable "resource_group_location" {
-  description = "The location of the resource group"
-  type        = string
-}
-
 # variable "vm_config" {
 #   type = map(object({
 #     private_ip       = string
@@ -53,11 +38,6 @@ variable "public_subnet_name" {
   default     = "subnet-public"
 }
 
-variable "admin_username" {
-  type    = string
-  default = "admin"
-}
-
 variable "admin_ssh_key_path" {
   description = "Path to the public SSH key file"
   type        = string
@@ -86,7 +66,6 @@ variable "custom_data_file" {
   nullable = true
 }
 
-# variables.tf
 variable "enable_public_ip" {
   type    = bool
   default = false   # module-wide default
@@ -96,3 +75,20 @@ variable "vm_config" {
   # keep your existing shape; lookup() handles missing key
   type = map(any)
 }
+###############################
+
+variable "custom_data" {
+  type      = string
+  default   = null
+  nullable  = true
+}
+
+variable "resource_group_name"     { type = string }
+variable "resource_group_location" { type = string }
+# variable "subnet_id"               { type = string }
+variable "admin_username"          { type = string,  default = "admin" }
+# variable "admin_ssh_key_path"      { type = string }
+variable "environment"             { type = string, default = "dev" }
+
+
+
