@@ -19,14 +19,14 @@ variable "resource_group_location" {
   type        = string
 }
 
-variable "vm_config" {
-  type = map(object({
-    private_ip       = string
-    public_ip_name   = string
-    machine_type     = string
-    machine_description = string
-  }))
-}
+# variable "vm_config" {
+#   type = map(object({
+#     private_ip       = string
+#     public_ip_name   = string
+#    machine_type     = string
+#    machine_description = string
+#  }))
+# }
 
 variable "network_name" {
   description = "The name of the network"
@@ -79,10 +79,20 @@ variable "image" {
   }
 }
 
-
 variable "custom_data_file" {
   description = "Path to cloud-init script or custom data file"
   type     = string
   default  = null
   nullable = true
+}
+
+# variables.tf
+variable "enable_public_ip" {
+  type    = bool
+  default = false   # module-wide default
+}
+
+variable "vm_config" {
+  # keep your existing shape; lookup() handles missing key
+  type = map(any)
 }
