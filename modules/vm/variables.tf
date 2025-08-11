@@ -85,10 +85,10 @@ variable "custom_data" {
 
 variable "resource_group_name"     { type = string }
 variable "resource_group_location" { type = string }
-# variable "subnet_id"               { type = string }
-variable "admin_username"          { type = string,  default = "admin" }
-# variable "admin_ssh_key_path"      { type = string }
-variable "environment"             { type = string, default = "dev" }
+# variable "subnet_id"             { type = string }
+variable "admin_username"          { type = string}
+# variable "admin_ssh_key_path"    { type = string }
+variable "environment"             { type = string }
 
 
 
