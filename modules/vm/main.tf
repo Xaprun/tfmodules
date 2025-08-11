@@ -71,11 +71,13 @@ locals {
   }
 
   _custom_data = (
-    var.custom_data != null && trim(var.custom_data) != ""
-      ? base64encode(var.custom_data)
-      : (var.custom_data_file != null && trim(var.custom_data_file) != ""
-          ? filebase64(var.custom_data_file)
-          : null)
+    var.custom_data != null && length(trimspace(var.custom_data)) > 0
+    ? base64encode(var.custom_data)
+    : (
+        var.custom_data_file != null && length(trimspace(var.custom_data_file)) > 0
+        ? filebase64(var.custom_data_file)
+        : null
+      )
   )
 }
 
