@@ -151,7 +151,8 @@ resource "azurerm_kubernetes_cluster_node_pool" "extra_fixed" {
   mode       = "User"
   max_pods   = var.additional_pool_max_pods
 
-  enable_auto_scaling = false
+  auto_scaling_enabled = false
+  # enable_auto_scaling = false
   node_count          = var.additional_pool_node_count
 
   node_labels = {
