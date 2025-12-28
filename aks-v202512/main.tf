@@ -110,10 +110,10 @@ resource "azurerm_kubernetes_cluster" "this" {
 }
 
 # ---------------------------------------
-# Optional extra user node pool
+# Optional extra user node pool - autoscaling
 # ---------------------------------------
-resource "azurerm_kubernetes_cluster_node_pool" "extra" {
-  count                 = var.enable_additional_pool ? 1 : 0
+resource "azurerm_kubernetes_cluster_node_pool" "extra_as" {
+  count                 = (var.enable_additional_pool && var.additional_pool_enable_auto_scaling) ? 1 : 0
   kubernetes_cluster_id = azurerm_kubernetes_cluster.this.id
 
   name       = var.additional_pool_name
@@ -121,10 +121,10 @@ resource "azurerm_kubernetes_cluster_node_pool" "extra" {
   mode       = "User"
   max_pods   = var.additional_pool_max_pods
 
-  enable_auto_scaling = var.additional_pool_enable_auto_scaling
+  enable_auto_scaling = true
   node_count          = var.additional_pool_node_count
-  min_count           = var.additional_pool_enable_auto_scaling ? var.additional_pool_min_count : null
-  max_count           = var.additional_pool_enable_auto_scaling ? var.additional_pool_max_count : null
+  min_count           = var.additional_pool_min_count
+  max_count           = var.additional_pool_max_count
 
   node_labels = {
     pool = var.additional_pool_name
@@ -134,9 +134,32 @@ resource "azurerm_kubernetes_cluster_node_pool" "extra" {
   eviction_policy = var.additional_pool_mode == "Spot" ? "Delete" : null
   spot_max_price  = var.additional_pool_mode == "Spot" ? var.additional_pool_spot_max_price : null
 
-  # node_count bywa "ruszany" przez autoscaler / API – nie walcz z tym w kółko
-  # (typowy problem przy autoscalingu). :contentReference[oaicite:2]{index=2}
   lifecycle {
-    ignore_changes = var.additional_pool_enable_auto_scaling ? [node_count] : []
+    ignore_changes = [node_count]
   }
 }
+
+# ---------------------------------------
+# Optional extra user node pool - fixed size
+# ---------------------------------------
+resource "azurerm_kubernetes_cluster_node_pool" "extra_fixed" {
+  count                 = (var.enable_additional_pool && !var.additional_pool_enable_auto_scaling) ? 1 : 0
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.this.id
+
+  name       = var.additional_pool_name
+  vm_size    = var.additional_pool_vm_size
+  mode       = "User"
+  max_pods   = var.additional_pool_max_pods
+
+  enable_auto_scaling = false
+  node_count          = var.additional_pool_node_count
+
+  node_labels = {
+    pool = var.additional_pool_name
+  }
+
+  priority        = var.additional_pool_mode == "Spot" ? "Spot" : "Regular"
+  eviction_policy = var.additional_pool_mode == "Spot" ? "Delete" : null
+  spot_max_price  = var.additional_pool_mode == "Spot" ? var.additional_pool_spot_max_price : null
+}
+
