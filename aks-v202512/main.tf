@@ -74,7 +74,7 @@ resource "azurerm_kubernetes_cluster" "this" {
     }
   }
 
-  local_account_disabled = var.local_account_disabled
+  local_account_disabled = (var.local_account_disabled && var.aad_admin_group_object_ids != null) ? true : false
 
   # OMS Agent / Monitoring (opcjonalnie)
   dynamic "oms_agent" {
