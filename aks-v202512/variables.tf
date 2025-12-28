@@ -56,12 +56,6 @@ variable "aad_admin_group_object_ids" {
   default     = null
 }
 
-variable "local_account_disabled" {
-  type        = bool
-  description = "Wyłącza local accounts na AKS (zalecane gdy masz AAD RBAC)"
-  default     = true
-}
-
 variable "node_count" {
   type        = number
   default     = 1
@@ -207,10 +201,14 @@ variable "additional_pool_spot_max_price" {
   description = "Spot max price (-1 = on-demand price)"
 }
 
-# fix 
+
+  
+
+# fix ,  default = true -> false, validation added
 variable "local_account_disabled" {
   type    = bool
   default = false
+  description = "Wyłącza local accounts na AKS (zalecane gdy masz AAD RBAC)"
 
   validation {
     condition     = var.local_account_disabled == false || var.aad_admin_group_object_ids != null
