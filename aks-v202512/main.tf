@@ -121,7 +121,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "extra_as" {
   mode       = "User"
   max_pods   = var.additional_pool_max_pods
 
-  enable_auto_scaling = true
+  auto_scaling_enabled = true
   node_count          = var.additional_pool_node_count
   min_count           = var.additional_pool_min_count
   max_count           = var.additional_pool_max_count
