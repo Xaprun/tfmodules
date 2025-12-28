@@ -206,3 +206,14 @@ variable "additional_pool_spot_max_price" {
   default     = -1
   description = "Spot max price (-1 = on-demand price)"
 }
+
+# fix 
+variable "local_account_disabled" {
+  type    = bool
+  default = false
+
+  validation {
+    condition     = var.local_account_disabled == false || var.aad_admin_group_object_ids != null
+    error_message = "local_account_disabled=true wymaga ustawienia aad_admin_group_object_ids (AKS-managed Entra ID)."
+  }
+}
