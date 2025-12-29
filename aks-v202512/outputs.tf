@@ -1,12 +1,12 @@
-output "aks_id" {
+output "id" {
   value = azurerm_kubernetes_cluster.this.id
 }
 
-output "aks_name" {
+output "name" {
   value = azurerm_kubernetes_cluster.this.name
 }
 
-output "aks_fqdn" {
+output "fqdn" {
   value = azurerm_kubernetes_cluster.this.fqdn
 }
 
