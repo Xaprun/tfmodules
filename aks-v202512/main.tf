@@ -1,5 +1,6 @@
 terraform {
   required_version = ">= 1.4.6"
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -8,6 +9,7 @@ terraform {
   }
 }
 
+
 provider "azurerm" {
   features {
     resource_group {
@@ -15,6 +17,7 @@ provider "azurerm" {
     }
   }
 }
+
 
 locals {
   tags_common = merge(
@@ -51,10 +54,13 @@ resource "azurerm_log_analytics_solution" "container_insights" {
   solution_name         = "ContainerInsights"
   location              = var.location
   resource_group_name   = var.resource_group_name
+  
   workspace_resource_id = local.log_analytics_workspace_id
-  workspace_name        = var.log_analytics_workspace_id != null
-    ? null
-    : azurerm_log_analytics_workspace.this[0].name
+  workspace_name        = coalesce(
+    var.log_analytics_workspace_name,
+    azurerm_log_analytics_workspace.this[0].name
+  )
+
 
   plan {
     publisher = "Microsoft"
