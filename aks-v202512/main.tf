@@ -137,9 +137,10 @@ resource "azurerm_kubernetes_cluster" "this" {
 
   tags = local.tags_common
 
-  depends_on = var.enable_oms_agent ? [
+  depends_on = [
     azurerm_log_analytics_solution.container_insights
-  ] : []
+  ]
+
 }
 
 # ---------------------------------------
