@@ -201,12 +201,17 @@ variable "additional_pool_spot_max_price" {
   description = "Spot max price (-1 = on-demand price)"
 }
 
-
-  
-
 # fix ,  default = true -> false, validation added
 variable "local_account_disabled" {
   type    = bool
   default = false
   description = "Wyłącza local accounts na AKS (zalecane gdy masz AAD RBAC)"
+}
+
+# fix: tworzenie automatyczne LAW dla container insght
+
+variable "create_log_analytics" {
+  description = "Whether to create Log Analytics Workspace and Container Insights"
+  type        = bool
+  default     = true
 }
