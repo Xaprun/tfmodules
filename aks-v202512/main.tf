@@ -28,20 +28,6 @@ locals {
 }
 
 # ---------------------------------------
-# Optional Log Analytics (for oms_agent)
-# ---------------------------------------
-resource "azurerm_log_analytics_workspace" "this" {
-  count               = var.enable_oms_agent && var.log_analytics_workspace_id == null ? 1 : 0
-  name                = "${var.aks_cluster_name}-law"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  sku                 = var.log_analytics_sku
-  retention_in_days   = var.log_analytics_retention_days
-
-  tags = local.tags_common
-}
-
-# ---------------------------------------
 # AKS
 # ---------------------------------------
 resource "azurerm_kubernetes_cluster" "this" {
@@ -62,6 +48,10 @@ resource "azurerm_kubernetes_cluster" "this" {
     content {
       authorized_ip_ranges = var.api_server_authorized_ip_ranges
     }
+
+    depends_on = [
+        azurerm_log_analytics_solution.container_insights
+      ]
   }
 
   # AAD / Azure RBAC dla AKS (opcjonalnie)
