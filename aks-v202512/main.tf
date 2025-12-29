@@ -48,10 +48,6 @@ resource "azurerm_kubernetes_cluster" "this" {
     content {
       authorized_ip_ranges = var.api_server_authorized_ip_ranges
     }
-
-    depends_on = [
-        azurerm_log_analytics_solution.container_insights
-      ]
   }
 
   # AAD / Azure RBAC dla AKS (opcjonalnie)
@@ -97,6 +93,11 @@ resource "azurerm_kubernetes_cluster" "this" {
   }
 
   tags = local.tags_common
+
+depends_on = [
+    azurerm_log_analytics_solution.container_insights
+  ]
+
 }
 
 # ---------------------------------------
