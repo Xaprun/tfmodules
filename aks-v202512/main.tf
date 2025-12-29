@@ -9,7 +9,11 @@ terraform {
 }
 
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
 }
 
 locals {
@@ -42,17 +46,22 @@ resource "azurerm_log_analytics_workspace" "this" {
 }
 
 resource "azurerm_log_analytics_solution" "container_insights" {
+  count = var.enable_oms_agent ? 1 : 0
+
   solution_name         = "ContainerInsights"
   location              = var.location
   resource_group_name   = var.resource_group_name
-  workspace_resource_id = azurerm_log_analytics_workspace.this.id
-  workspace_name        = azurerm_log_analytics_workspace.this.name
+  workspace_resource_id = local.log_analytics_workspace_id
+  workspace_name        = var.log_analytics_workspace_id != null
+    ? null
+    : azurerm_log_analytics_workspace.this[0].name
 
   plan {
     publisher = "Microsoft"
     product   = "OMSGallery/ContainerInsights"
   }
 }
+
 
 
 # ---------------------------------------
@@ -122,9 +131,9 @@ resource "azurerm_kubernetes_cluster" "this" {
 
   tags = local.tags_common
 
-depends_on = [
+  depends_on = var.enable_oms_agent ? [
     azurerm_log_analytics_solution.container_insights
-  ]
+  ] : []
 }
 
 # ---------------------------------------
