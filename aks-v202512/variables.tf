@@ -48,11 +48,6 @@ variable "aad_admin_group_object_ids" {
 variable "local_account_disabled" {
   type    = bool
   default = false
-
-  validation {
-    condition     = !(var.local_account_disabled && var.aad_admin_group_object_ids == null)
-    error_message = "local_account_disabled=true wymaga aad_admin_group_object_ids"
-  }
 }
 
 variable "log_analytics_workspace_id" {
