@@ -111,6 +111,11 @@ variable "log_analytics_workspace_id" {
   description = "Jeśli podasz, moduł nie tworzy LAW. Jeśli null i enable_oms_agent=true, stworzy LAW."
 }
 
+variable "log_analytics_workspace_name" {
+  type    = string
+  default = null
+}
+
 variable "log_analytics_sku" {
   type        = string
   default     = "PerGB2018"
