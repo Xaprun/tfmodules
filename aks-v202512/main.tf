@@ -34,6 +34,16 @@ resource "azurerm_kubernetes_cluster" "this" {
   role_based_access_control_enabled = true
   local_account_disabled          = var.local_account_disabled
 
+  lifecycle {
+    precondition {
+      condition = !(
+        var.local_account_disabled &&
+        var.aad_admin_group_object_ids == null
+      )
+      error_message = "local_account_disabled=true wymaga podania aad_admin_group_object_ids"
+    }
+  }
+
   dynamic "azure_active_directory_role_based_access_control" {
     for_each = var.aad_admin_group_object_ids != null ? [1] : []
     content {
