@@ -11,6 +11,15 @@ resource "azurerm_log_analytics_workspace" "this" {
 
   tags = local.tags_common
 }
+resource "azurerm_log_analytics_workspace" "this" {
+  for_each = var.create_log_analytics ? { main = true } : {}
+
+  name                = "${var.aks_cluster_name}-law"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  sku                 = "PerGB2018"
+}
+
 
 resource "azurerm_log_analytics_solution" "container_insights" {
   count = var.create_log_analytics ? 1 : 0
