@@ -202,6 +202,12 @@ variable "enable_managed_prometheus" {
   default     = true
 }
 
+variable "enable_oms_agent" {
+  type        = bool
+  description = "Enable Container Insights / OMS agent"
+  default     = true
+}
+
 ###############################
 # Tags
 ###############################
