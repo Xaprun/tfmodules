@@ -218,16 +218,15 @@ resource "azurerm_monitor_data_collection_rule" "prometheus" {
   resource_group_name = var.resource_group_name
 
   destinations {
-    monitor_account {
-      monitor_account_id = azurerm_monitor_account.prometheus.id
-      name               = "metrics"
+    azure_monitor_metrics {
+      name = "metrics"
     }
   }
 
   data_sources {
     prometheus_forwarder {
-      streams = ["Microsoft-PrometheusMetrics"]
       name    = "prometheus"
+      streams = ["Microsoft-PrometheusMetrics"]
     }
   }
 
@@ -237,12 +236,6 @@ resource "azurerm_monitor_data_collection_rule" "prometheus" {
   }
 }
 
-# Azure Monitor Account (Managed Prometheus)
-resource "azurerm_monitor_account" "prometheus" {
-  name                = "${var.aks_cluster_name}-prom"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-}
 
 # Podpięcie AKS → DCR:
 resource "azurerm_monitor_data_collection_rule_association" "aks_prometheus" {
@@ -250,3 +243,4 @@ resource "azurerm_monitor_data_collection_rule_association" "aks_prometheus" {
   target_resource_id      = azurerm_kubernetes_cluster.this.id
   data_collection_rule_id = azurerm_monitor_data_collection_rule.prometheus.id
 }
+
