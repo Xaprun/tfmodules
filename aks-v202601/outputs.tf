@@ -59,15 +59,6 @@ output "node_resource_group_id" {
 # Observability – Managed Prometheus
 ###############################
 
-output "azure_monitor_workspace_id" {
-  description = "Azure Monitor Workspace ID (Managed Prometheus)"
-  value       = try(azurerm_monitor_workspace.this.id, null)
-}
-
-output "azure_monitor_workspace_name" {
-  description = "Azure Monitor Workspace name"
-  value       = try(azurerm_monitor_workspace.this.name, null)
-}
 
 ###############################
 # Kubeconfig (OPTIONAL – legacy / bootstrap only)
