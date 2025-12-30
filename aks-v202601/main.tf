@@ -56,10 +56,17 @@ resource "azurerm_log_analytics_solution" "container_insights" {
   resource_group_name   = var.resource_group_name
   
   workspace_resource_id = local.log_analytics_workspace_id
+  
+   workspace_name        = coalesce(
+    var.log_analytics_workspace_name,
+    azurerm_log_analytics_workspace.this[0].name
+  )
+
+  # reverted after error:
   # mod/fix w module observability
-  workspace_name = var.log_analytics_workspace_id != null
-    ? var.log_analytics_workspace_name
-    : azurerm_log_analytics_workspace.this[0].name
+  # workspace_name = var.log_analytics_workspace_id != null
+  #  ? var.log_analytics_workspace_name
+  #  : azurerm_log_analytics_workspace.this[0].name
 
   plan {
     publisher = "Microsoft"
