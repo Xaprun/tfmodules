@@ -226,13 +226,3 @@ variable "enable_managed_prometheus" {
   type    = bool
   default = true
 }
-
-variable "enable_managed_grafana" {
-  type    = bool
-  default = true
-}
-
-variable "grafana_name" {
-  type    = string
-  default = null
-}
