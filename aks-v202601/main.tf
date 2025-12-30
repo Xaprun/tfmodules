@@ -217,12 +217,6 @@ resource "azurerm_monitor_data_collection_rule" "prometheus" {
   location            = var.location
   resource_group_name = var.resource_group_name
 
-  destinations {
-    azure_monitor_metrics {
-      name = "metrics"
-    }
-  }
-
   data_sources {
     prometheus_forwarder {
       name    = "prometheus"
@@ -232,9 +226,21 @@ resource "azurerm_monitor_data_collection_rule" "prometheus" {
 
   data_flow {
     streams      = ["Microsoft-PrometheusMetrics"]
-    destinations = ["metrics"]
+    destinations = ["default"]
   }
+
+  destinations {
+    log_analytics {
+      name                  = "default"
+      workspace_resource_id = local.log_analytics_workspace_id
+    }
+  }
+
+  depends_on = [
+    azurerm_kubernetes_cluster.this
+  ]
 }
+
 
 
 # Podpięcie AKS → DCR:
@@ -243,4 +249,5 @@ resource "azurerm_monitor_data_collection_rule_association" "aks_prometheus" {
   target_resource_id      = azurerm_kubernetes_cluster.this.id
   data_collection_rule_id = azurerm_monitor_data_collection_rule.prometheus.id
 }
+
 
