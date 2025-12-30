@@ -9,15 +9,6 @@ terraform {
   }
 }
 
-provider "azurerm" {
-  features {
-    resource_group {
-      # ułatwia destroy RG, gdy Azure zostawi coś "po drodze"
-      prevent_deletion_if_contains_resources = false
-    }
-  }
-}
-
 locals {
   tags_common = merge(
     var.tags,
