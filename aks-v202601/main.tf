@@ -80,7 +80,11 @@ resource "azurerm_kubernetes_cluster" "this" {
   # Managed Prometheus (AKS built-in scrape pipeline)
   # ---------------------------------------
   # To nie jest "Container Insights". To jest nowy model metryk (Azure Monitor Managed Prometheus).
-  monitor_metrics {}
+  monitor_metrics {
+    annotations_allowed = null
+    labels_allowed      = null
+  }
+
 }
 
 # ---------------------------------------
@@ -140,23 +144,4 @@ resource "azurerm_kubernetes_cluster_node_pool" "extra_fixed" {
 # ---------------------------------------
 # Managed Observability backend (Azure Monitor Workspace)
 # ---------------------------------------
-resource "azurerm_monitor_workspace" "this" {
-  count               = var.enable_managed_prometheus ? 1 : 0
-  name                = "${var.aks_cluster_name}-amw"
-  location            = var.location
-  resource_group_name = var.resource_group_name
 
-  tags = local.tags_common
-}
-
-# Association: AKS → Azure Monitor Workspace
-resource "azurerm_monitor_workspace_association" "aks" {
-  count = var.enable_managed_prometheus ? 1 : 0
-
-  monitor_workspace_id = azurerm_monitor_workspace.this[0].id
-  target_resource_id   = azurerm_kubernetes_cluster.this.id
-
-  depends_on = [
-    azurerm_kubernetes_cluster.this
-  ]
-}
