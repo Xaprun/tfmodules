@@ -62,26 +62,11 @@ resource "azurerm_log_analytics_solution" "container_insights" {
     azurerm_log_analytics_workspace.this[0].name
   )
 
-  # reverted after error:
-  # mod/fix w module observability
-  # workspace_name = var.log_analytics_workspace_id != null
-  #  ? var.log_analytics_workspace_name
-  #  : azurerm_log_analytics_workspace.this[0].name
-
   plan {
     publisher = "Microsoft"
     product   = "OMSGallery/ContainerInsights"
   }
 }
-
-# added observability
-# ma być w variables, ale na razie tyu ;)
-validation {
-  condition     = var.log_analytics_workspace_id == null || var.log_analytics_workspace_name != null
-  error_message = "When log_analytics_workspace_id is set, log_analytics_workspace_name must also be provided."
-}
-
-
 
 # ---------------------------------------
 # AKS
