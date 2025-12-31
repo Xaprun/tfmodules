@@ -77,12 +77,12 @@ resource "azurerm_kubernetes_cluster" "this" {
   tags = local.tags_common
 
   # ---------------------------------------
-  # Managed Prometheus (AKS built-in scrape pipeline)
+  # Managed Prometheus 
   # ---------------------------------------
-  # To nie jest "Container Insights". To jest nowy model metryk (Azure Monitor Managed Prometheus).
   monitor_metrics {
-    annotations_allowed = null
-    labels_allowed      = null
+    # opcjonalnie: allow-list etykiet/annotacji
+    # annotations_allowed = "..."
+    # labels_allowed      = "..."
   }
 
 }
