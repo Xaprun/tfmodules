@@ -13,12 +13,6 @@ output "kubelet_identity_client_id" {
   description = "Kubelet identity clientId"
 }
 
-output "kubelet_identity_resource_id" {
-  value       = try(azurerm_kubernetes_cluster.this.kubelet_identity[0].resource_id, null)
-  description = "Kubelet identity resourceId"
-}
-
-
 ###############################
 # AKS – Core
 ###############################
