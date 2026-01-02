@@ -1,3 +1,23 @@
+output "aks_identity_principal_id" {
+  value       = azurerm_kubernetes_cluster.this.identity[0].principal_id
+  description = "AKS system-assigned managed identity principalId"
+}
+
+output "kubelet_identity_object_id" {
+  value       = try(azurerm_kubernetes_cluster.this.identity_profile[0].kubeletidentity[0].object_id, null)
+  description = "Kubelet identity objectId (used by managed Prometheus / node agent)"
+}
+
+output "kubelet_identity_client_id" {
+  value       = try(azurerm_kubernetes_cluster.this.identity_profile[0].kubeletidentity[0].client_id, null)
+  description = "Kubelet identity clientId"
+}
+
+output "kubelet_identity_resource_id" {
+  value       = try(azurerm_kubernetes_cluster.this.identity_profile[0].kubeletidentity[0].resource_id, null)
+  description = "Kubelet identity resourceId"
+}
+
 ###############################
 # AKS – Core
 ###############################
